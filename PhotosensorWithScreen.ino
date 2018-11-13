@@ -66,7 +66,7 @@ void setup() {
 void loop() {
 
   if (digitalRead(8) == LOW) {
-        if(denom == 2){
+        if(denom == 12){
           lcd.clear();
           lcd.setCursor(0, 0);
           lcd.print("Correct!");
@@ -87,16 +87,11 @@ void loop() {
   Serial.println(photocellReading);
   
   delay(50);
-  if(abs(photocellReading - lastValue) > 20){
+  if((lastValue - photocellReading) > 20){
     denom++;
-    delay(1500);
+    delay(50);
   }
   lastValue = photocellReading;
-
-  //delay(3000);
-  //lcd.setCursor(0, 0);
-  //lcd.print("1    2       ");
-  //delay(3000);
   
   //lcd.clear();
 }
