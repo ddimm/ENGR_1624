@@ -65,6 +65,7 @@ void setup() {
 
 void loop() {
 
+  // Button if pressed
   if (digitalRead(8) == LOW) {
         if(denom == 12){
           lcd.clear();
