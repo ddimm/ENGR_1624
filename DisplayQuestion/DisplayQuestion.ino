@@ -48,6 +48,8 @@
 #define BUTTON_PIN 0 //place holder for now
 #define LED_PIN 0 //place holder as 0 for now
 #define DENOM_CAP 4
+#define LIGHT_SENSOR_PIN 8
+
 
 // initialize the library by associating any needed LCD interface pin
 // with the arduino pin number it is connected to
@@ -60,8 +62,7 @@ void setup() {
 
   pinMode(BUTTON_PIN, INPUT);
   pinMode(LED_PIN, OUTPUT);
-
-
+  pinMode(LIGHT_SENSOR_PIN, INPUT_PULLUP);
   //random number deals
   Serial.begin(9600);
   randomSeed(analogRead(0));
@@ -133,7 +134,13 @@ void loop() {
   denom1=random(1,DENOM_CAP+1);
   denom2=random(1,DENOM_CAP+1);
   int commonDenom=denom2*denom1;
-  int coinIn=0;
+  lcd.setCursor(0,0);
+  lcd.print("What is the GCD?");
+  lcd.setCursor(0,1);
+  
+  
+  incorrect: int coinIn=0;
+  lcd.print(denom1+"+"+"denom2+"="+coinIn); 
   bool quit=false;
   while (!quit){
     if(digitalRead(BUTTON_PIN)==LOW){
@@ -141,9 +148,20 @@ void loop() {
         lcd.setCursor(0,0);
         lcd.print("Correct!");
         delay(5000);
-        goto gameStart;
+        goto gameStart;   
       }
+      else{
+        lcd.setCursor(0,0);
+        lcd.print("Try Again!");
+        delay(5000);
+        goto incorrect;
+      }
+    else if(digitalRead(LIGHT_SENSOR_PIN)==LOW){
+        ++coinIn;
+        lcd.setCursor(0,1);
+        lcd.print(denom1+"+"+"denom2+"="+coinIn);
     }
+    
   }
   
 }
