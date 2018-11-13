@@ -45,10 +45,10 @@
 #include <math.h>
 
 //define pin constants
-#define BUTTON_PIN 0 //place holder for now
+#define BUTTON_PIN 8 //place holder for now
 #define LED_PIN 0 //place holder as 0 for now
 #define DENOM_CAP 4
-#define LIGHT_SENSOR_PIN 8
+#define LIGHT_SENSOR_PIN A0
 
 
 // initialize the library by associating any needed LCD interface pin
@@ -56,13 +56,17 @@
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
+int denom1=random(1,DENOM_CAP+1);
+int denom2=random(1,DENOM_CAP+1);
+int commonDenom=denom2*denom1;
+int coinIn=0;
 void setup() {
   
   //cleaning up the setup portion for now
 
-  pinMode(BUTTON_PIN, INPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(LED_PIN, OUTPUT);
-  pinMode(LIGHT_SENSOR_PIN, INPUT_PULLUP);
+  pinMode(LIGHT_SENSOR_PIN, INPUT);
   //random number deals
   Serial.begin(9600);
   randomSeed(analogRead(0));
@@ -111,6 +115,16 @@ void setup() {
   
   //lcd.print("2 + 3 = 6");
   //lcd.print("1/2 + 1/3");
+  lcd.setCursor(0,0);
+  lcd.print("FRACNITE");
+  lcd.setCursor(0,1);
+  lcd.print("Press Button!");
+  while(true){
+    if(digitalRead(BUTTON_PIN)==LOW){
+      break;
+    }
+  }
+
 }
 
 bool checkAns(int correct, int coinIn){
@@ -123,45 +137,47 @@ void loop() {
   //lcd.setCursor(0, 1);
   // print the number of seconds since reset:
   //lcd.print(millis() / 1000);
-  gameStart: lcd.setCursor(0,0);
-  lcd.print("FRACNITE");
-  lcd.setCursor(0,1);
-  lcd.print("Press Button!");
-  while(digitalRead(BUTTON_PIN)!=LOW){
-    delay(1000);
-  }
-  int denom1, denom2;
-  denom1=random(1,DENOM_CAP+1);
-  denom2=random(1,DENOM_CAP+1);
-  int commonDenom=denom2*denom1;
-  lcd.setCursor(0,0);
-  lcd.print("What is the GCD?");
-  lcd.setCursor(0,1);
+ 
+
   
-  
-  incorrect: int coinIn=0;
-  lcd.print(denom1+"+"+"denom2+"="+coinIn); 
-  bool quit=false;
-  while (!quit){
-    if(digitalRead(BUTTON_PIN)==LOW){
-      if(checkAns(commonDenom,coinIn)){
-        lcd.setCursor(0,0);
-        lcd.print("Correct!");
-        delay(5000);
-        goto gameStart;   
-      }
-      else{
-        lcd.setCursor(0,0);
-        lcd.print("Try Again!");
-        delay(5000);
+    //if(digitalRead(BUTTON_PIN)==LOW){
+      delay(500);
+      lcd.clear();
+      
+      lcd.clear();
+      incorrect: lcd.setCursor(0,0);
+      lcd.print("What is the GCD?");
+      lcd.setCursor(0,1);
+      
+      
+      lcd.print((String)denom1+"+"+(String)denom2+"="+(String)coinIn); 
+      //bool quit=false;
+      //while (!quit){
+      if(digitalRead(BUTTON_PIN)==LOW){
+        lcd.clear(); //
+        lcd.print("Enter Coins"); //
+        if(checkAns(commonDenom,coinIn)){
+          lcd.setCursor(0,0);
+          lcd.print("Correct!");
+          delay(5000);
+          lcd.clear();
+          
+       
+        }
+        else if (!checkAns(commonDenom, coinIn)){
+          lcd.clear();
+          lcd.setCursor(0,0);
+          lcd.print("Try Again!");
+          delay(5000);
+          lcd.clear();
+          
+          goto incorrect;
+        }
         goto incorrect;
       }
     else if(digitalRead(LIGHT_SENSOR_PIN)==LOW){
         ++coinIn;
         lcd.setCursor(0,1);
-        lcd.print(denom1+"+"+"denom2+"="+coinIn);
-    }
-    
+        lcd.print((String)denom1+"+"+(String)denom2+"="+(String)coinIn);
   }
-  
 }
