@@ -52,6 +52,7 @@ String bottom;
 int photocellPin = A0;
 int photocellReading;
 int lastValue;
+int ledPin = 7; 
 
 void setup() {
   // set up the LCD's number of columns and rows:
@@ -60,11 +61,15 @@ void setup() {
   denom = 0;
   bottom = "";
   Serial.begin(9600);
+  pinMode(ledPin, OUTPUT); 
 }
 
 
 void loop() {
 
+  // LED
+  digitalWrite(ledPin, HIGH);
+   
   // Button if pressed
   if (digitalRead(8) == LOW) {
         if(denom == 12){
