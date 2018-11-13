@@ -49,9 +49,9 @@ const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 int denom;
 String bottom;
-int photocellPin = 0;
+int photocellPin = A0;
 int photocellReading;
-int lastReading;
+int lastValue;
 
 void setup() {
   // set up the LCD's number of columns and rows:
@@ -60,7 +60,6 @@ void setup() {
   denom = 0;
   bottom = "";
   Serial.begin(9600);
-  
 }
 
 
@@ -87,12 +86,12 @@ void loop() {
   Serial.print("Analog reading = ");
   Serial.println(photocellReading);
   
-  delay(100);
-  if(abs(photocellReading - lastReading) > 50){
+  delay(50);
+  if(abs(photocellReading - lastValue) > 20){
     denom++;
     delay(1500);
   }
-  lastReading = photocellReading;
+  lastValue = photocellReading;
 
   //delay(3000);
   //lcd.setCursor(0, 0);
