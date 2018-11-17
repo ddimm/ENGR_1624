@@ -56,10 +56,26 @@
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
+int getLCD(int num1, int num2){
+  if(num1==num2){
+    return num1;
+  }
+  else if(num1<num2 && num2%num1==0){
+    return num2;
+  }
+  else if(num2<num1 && num1%num2==0){
+    return num1;
+  }
+  else{
+    return num1*num2;
+  }
+}
+
 int denom1=random(1,DENOM_CAP+1);
 int denom2=random(1,DENOM_CAP+1);
-int commonDenom=denom2*denom1;
+int commonDenom=getLCD(denom1,denom2);
 int coinIn=0;
+int lastValue;
 void setup() {
   
   //cleaning up the setup portion for now
@@ -120,7 +136,7 @@ void setup() {
   lcd.setCursor(0,1);
   lcd.print("Press Button!");
   while(true){
-    if(digitalRead(BUTTON_PIN)==LOW){
+    if(digitalRead(BUTTON_PIN)==HIGH){
       break;
     }
   }
@@ -148,19 +164,23 @@ void loop() {
       incorrect: lcd.setCursor(0,0);
       lcd.print("What is the GCD?");
       lcd.setCursor(0,1);
+      int photocellReading=analogRead(LIGHT_SENSOR_PIN);
+      Serial.println(photocellReading);
       
       
       lcd.print((String)denom1+"+"+(String)denom2+"="+(String)coinIn); 
       //bool quit=false;
       //while (!quit){
-      if(digitalRead(BUTTON_PIN)==LOW){
+      if(digitalRead(BUTTON_PIN)==HIGH){
         lcd.clear(); //
         lcd.print("Enter Coins"); //
         if(checkAns(commonDenom,coinIn)){
+          lcd.clear()
           lcd.setCursor(0,0);
           lcd.print("Correct!");
           delay(5000);
           lcd.clear();
+          goto start;
           
        
         }
@@ -170,14 +190,18 @@ void loop() {
           lcd.print("Try Again!");
           delay(5000);
           lcd.clear();
-          
+          coinIn=0;
           goto incorrect;
         }
         goto incorrect;
       }
-    else if(digitalRead(LIGHT_SENSOR_PIN)==LOW){
+    
+    else if((lastValue-photocellReading)>20){
         ++coinIn;
         lcd.setCursor(0,1);
         lcd.print((String)denom1+"+"+(String)denom2+"="+(String)coinIn);
+        Serial.println(coinIn);
+        delay(500);
   }
+  lastValue=photocellReading;
 }
