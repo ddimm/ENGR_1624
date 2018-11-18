@@ -23,7 +23,7 @@ const int photo_pin = 0;
 const int piezo_pin = 12;
 
 //button status:
-bool button_start;
+bool button_submit;
 
 void setup() {
   //initialize all harware inputs and ouputs:
@@ -32,7 +32,7 @@ void setup() {
   pinMode(led_pin, OUTPUT); 
   pinMode(piezo_pin, OUTPUT);
   lcd.begin(16, 2);
-  button_start = false;
+  button_submit = false;
   Serial.begin(9600);
   
   //Game welcome screen
@@ -40,6 +40,12 @@ void setup() {
   lcd.print("FRACNITE!");
   lcd.setCursor(0,1);
   lcd.print("Press button.");
+  
+  while(true){
+    if(digitalRead(button_pin)==LOW){
+      break;
+    }
+  }
 }
 
 void loop() {
@@ -47,28 +53,33 @@ void loop() {
   digitalWrite(led_pin, HIGH);  
   
   photoReading = analogRead(photo_pin);
-  //Serial.println(photoReading);
+  Serial.println(photoReading);
   
-  if(digitalRead(button_pin) == LOW)
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("What is the LCD?");
+  lcd.setCursor(0,1);
+  lcd.print(String(denom1) + " and "+ String(denom2) + ": " + String(coinIn));
+  delay(500);
+    
+  if(photoReading - lastReading > 30)
   {
+    if(button_submit == false)
+    {
+      coinIn++;
+      delay(500);
+    }
+  }
+  
+  lastReading = photoReading;
+    
+  if(digitalRead(button_pin)==LOW)
+  {
+    button_submit = true;
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print("What is the LCD?");
-    lcd.setCursor(0,1);
-    lcd.print(String(denom1) + " and "+ String(denom2) + ": " + String(coinIn));
-    delay(500);
-    
-    int dif = photoReading - lastReading;
-    Serial.println(dif);
-    
-//    if(photoReading - lastReading > 30)
-//    {
-//      coinIn++;
-//      delay(500);
-//    }
-    lastReading = photoReading;
+    lcd.print("Checking Answer.");
   }
- 
 }
 
 //Method that finds the LCD of two numbers.
@@ -85,4 +96,9 @@ int getLCD(int num1, int num2){
   else{
     return num1*num2;
   }
+}
+
+//Method that checks if answer is true
+bool checkAns(int correct, int coinIn){
+  return correct==coinIn;
 }
