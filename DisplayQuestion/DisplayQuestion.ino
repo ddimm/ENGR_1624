@@ -46,9 +46,9 @@
 
 //define pin constants
 #define BUTTON_PIN 8 //place holder for now
-#define LED_PIN 0 //place holder as 0 for now
+#define LED_PIN 7 //place holder as 0 for now
 #define DENOM_CAP 4
-#define LIGHT_SENSOR_PIN A0
+#define LIGHT_SENSOR_PIN 0
 
 
 // initialize the library by associating any needed LCD interface pin
@@ -136,7 +136,7 @@ void setup() {
   lcd.setCursor(0,1);
   lcd.print("Press Button!");
   while(true){
-    if(digitalRead(BUTTON_PIN)==HIGH){
+    if(digitalRead(BUTTON_PIN)==LOW){
       break;
     }
   }
@@ -171,16 +171,17 @@ void loop() {
       lcd.print((String)denom1+"+"+(String)denom2+"="+(String)coinIn); 
       //bool quit=false;
       //while (!quit){
-      if(digitalRead(BUTTON_PIN)==HIGH){
+      if(digitalRead(BUTTON_PIN)==LOW){
         lcd.clear(); //
         lcd.print("Enter Coins"); //
         if(checkAns(commonDenom,coinIn)){
-          lcd.clear()
+          lcd.clear();
           lcd.setCursor(0,0);
           lcd.print("Correct!");
           delay(5000);
           lcd.clear();
-          goto start;
+          lcd.clear();
+          exit;
           
        
         }
@@ -196,12 +197,12 @@ void loop() {
         goto incorrect;
       }
     
-    else if((lastValue-photocellReading)>20){
+    else if((lastValue-photocellReading)>30){
         ++coinIn;
         lcd.setCursor(0,1);
         lcd.print((String)denom1+"+"+(String)denom2+"="+(String)coinIn);
         Serial.println(coinIn);
-        delay(500);
+        delay(5);
   }
   lastValue=photocellReading;
 }
