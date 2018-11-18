@@ -7,6 +7,7 @@
 #define LED_PIN 7 //place holder as 0 for now
 #define DENOM_CAP 4
 #define LIGHT_SENSOR_PIN 0
+#define BUZZER_PIN 9
 
 
 // initialize the library by associating any needed LCD interface pin
@@ -29,9 +30,9 @@ int getLCD(int num1, int num2){
   }
 }
 
-int denom1=random(1,DENOM_CAP+1);
-int denom2=random(1,DENOM_CAP+1);
-int commonDenom=getLCD(denom1,denom2);
+int denom1;
+int denom2;;
+int commonDenom;
 int coinIn=0;
 int lastValue;
 void setup() {
@@ -45,6 +46,9 @@ void setup() {
   Serial.begin(9600);
   randomSeed(analogRead(0));
 //  set up the LCD's number of columns and rows:
+  denom1=random(1,DENOM_CAP+1);
+  denom2=random(1, DENOM_CAP+1);
+  commonDenom=getLCD(denom1, denom2);
   lcd.begin(16, 2);
   lcd.setCursor(0,0);
   lcd.print("FRACNITE");
@@ -56,7 +60,6 @@ void setup() {
     }
   }
 }
-
 bool checkAns(int correct, int coinIn){
   return correct==coinIn;
 }
