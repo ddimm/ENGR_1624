@@ -5,7 +5,7 @@
 //define pin constants
 #define BUTTON_PIN 8 //place holder for now
 #define LED_PIN 7 //place holder as 0 for now
-#define DENOM_CAP 4
+#define DENOM_CAP 5
 #define LIGHT_SENSOR_PIN 0
 #define BUZZER_PIN 9
 
@@ -213,7 +213,9 @@ else if((lastValue-photocellReading)>30){
     lcd.print((String)denom1+"+"+(String)denom2+"="+(String)coinIn);
     Serial.println(coinIn);
     tone(BUZZER_PIN, NOTE_C5,500);
+    noTone(BUZZER_PIN);
     tone(BUZZER_PIN,NOTE_C5, 500);
+    noTone(BUZZER_PIN);
     delay(5);
   }
   lastValue=photocellReading;
